@@ -1,27 +1,33 @@
-#include <ESP8266WiFi.h>
-#include <WiFiClient.h>
-#include <ESP8266WebServer.h>
-#include <ESP8266mDNS.h>
-#include "DHT.h"
-#ifndef STASSID
+//Call the necessary libraries
+#include <ESP8266WiFi.h>    //ESP8266 library
+#include <WiFiClient.h>      //WiFi library
+#include <ESP8266WebServer.h>  //Webservere library
+#include <ESP8266mDNS.h>        //
+#include "DHT.h"                //DHT sensor library
+
+#ifndef STASSID                    //SSID definition
 #define STASSID "TECNO SPARK 2"
 #define STAPSK  "lumun1962"
 #endif
 
+#define LED 2             //On board LED  ?LED connected to Datapin2
+#define DHTTYPE DHT11     // DHT 11
+
 const char *ssid = STASSID;
 const char *password = STAPSK;
-#define LED 2       //On board LED
-#define DHTTYPE DHT11 // DHT 11
-uint8_t DHTPin = D1;
-DHT dht(DHTPin, DHTTYPE);
-float humidity, temperature;
 
-const int Rainsensor=D3;
+uint8_t DHTPin = D1;        //DHT11 connected to data pin1
+DHT dht(DHTPin, DHTTYPE);
+float humidity, temperature;        //Assign varible names
+
+const int Rainsensor=D3;          //Rain sensor module data pin connected to Data pin3
 int Rainpin=0;
 String Rain;
-String N="None", R="Raining";
+String N="None", R="Raining";    //Assign letters to rain status
 
-ESP8266WebServer server(80);
+ESP8266WebServer server(80);      //Create an instance of webserver class and initialize it on port80
+
+//Create main page with html 
 const char MAIN_page[] PROGMEM = R"=====(
 <!doctype html>
 <html>
@@ -40,6 +46,8 @@ const char MAIN_page[] PROGMEM = R"=====(
     -webkit-user-select: none;
     -ms-user-select: none;
   }
+
+//Create a table. Present the data in a table
   /* Data Table Styling*/ 
   #dataTable {
     font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
@@ -175,6 +183,7 @@ server.on("/readData", readData);
 }
 
 void loop(void) {
+  //Call the functions
   server.handleClient();
   MDNS.update();
 }
